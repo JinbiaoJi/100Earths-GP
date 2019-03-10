@@ -1,0 +1,25 @@
+Goals/To-Do's set during March 6 meeting. Feel free to add, remove, add, claim, etc...
+
+Notes:
+Convergence - almost there for the 8 parameter model (quasiperiodic in RV, quasiperiodic + long-term exponential in H-alpha)
+For now, ignore the complex models. We will return to them if needed.
+
+- Go back to original notebook with just RV
+  - plot multiple samples individually
+  - are they hitting the data points?
+
+- Long-term exponential drift notebooks on RV and H-Alpha with NO periodicity
+  - how well do we reproduce long-term trend?
+  - do we converge? are posteriors well-behaved?
+
+- Check george documentation for error method/variable to force a tighter fit on the real data
+
+- Experiment with the minimizer technique
+
+- Experiment with the noise
+  - Do we want a uniform white noise?
+  - Red noise - augment error bars (example done in george/emcee tutorial)
+
+- Check george documentation on how to freeze parts of the kernel
+
+- Check sum of residuals for simple and complex models
