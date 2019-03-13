@@ -22,4 +22,12 @@ For now, ignore the complex models. We will return to them if needed.
 
 - Check george documentation on how to freeze parts of the kernel
 
+From george documentation:
+"Another feature common to the kernels is that you can "freeze" and "thaw" parameters by name"
+k = [your kernel]
+k.freeze_parameter([parameter name])
+k.freeze_all_parameters()
+k.thaw_parameter([parameter name])
+k.thaw_all_parameters()
+
 - Check sum of residuals for simple and complex models
