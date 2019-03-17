@@ -1,0 +1,8 @@
+Goals moving forward from Friday, March 15 meeting:
+
+ - pulling in the priors for the quasiperiodic RV model
+ - continue experimentation with the different minimization techniques/algorithms
+ - continue working on the convergence for quasiperiodic RV and quasiperiodic RV & H-alpha with long-term in H-alpha
+ - summarize what we know so far about Kapteyn's star
+ - abstract by Monday
+   - look at/reference other AAS abstracts
