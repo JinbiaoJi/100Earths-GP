@@ -1,0 +1,64 @@
+collection of information on Kapteyn's Star outline
+feel free to add to/remove/edit this file 
+###################################################################
+
+Background information
+ - old m1 sub-dwarf
+ - ~3.91 pc from the Sun (12.76 light years from Earth)
+ - closest halo star to the solar system
+   - halo stars
+     - low luminosity
+     - generally old, >12 billion years
+     - generally metal poor
+
+ - reported planets
+   - two super-earth planets: Anglada-Escude (2014)
+     - Kapteyn b, P = 48.6 days
+       - in Kapteyn's "Goldilocks Zone"
+
+     - Kapteyn b, P = 121.5 days
+
+ - Debate
+   - Robertson et. al (2015)
+     - claimed stellar rotation: P = 143.days
+     - 48 day period is an integer fraction (1/3) fo the stellar rotation -> due to rotation and activity
+     - 121 day period is very close the rotation
+       - need to observe Kapteyn more to come to a conclusion about planet c
+
+
+ - Gaussian Processes
+   - Last Semester
+     - fitting quasiperioidc to just RV signals
+     - kernel: periodic * squaredexponential
+       - rotation period = 109.5 days
+       - no significant signals in residuals
+       	 - P = 17.8 days (from window function?)
+
+
+   - This Semester
+     - addition of H-alpha data
+       - good indicator for magnetic activity
+       - should help in establishing a rotation period of the star
+       - modeling RV and H-alpha together
+       	 - require that the periods and decorrelation timescales of the two be the same
+
+     - model options
+       - quasiperiodic only
+       - quasiperiodic in RV, quasiperiodic with a longterm trend in H-Alpha
+       - quasiperiodic with longterm trends in both RV and H-Alpha
+       	 - metrics for longterm do NOT have to be the same
+	 - metric for longterm DO have to be the same
+	 - (these models are extremely fragile and dependent on initial guesses)
+
+
+      - whitenoise
+      	- include in compute() commands
+	  - compute(alldates, allRVerr)
+	  - remove call to whitenoise() function
+
+
+
+  - Unknowns
+    - limited data points
+      - ~150 points over 10 years
+      - Are there enough data points to report planets? Are there enough data points to be confident in the period?
