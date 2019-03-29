@@ -23,7 +23,12 @@ and Astronomy \\ 217 Sharp Lab \\ Newark, DE 19716 USA}
 
 \begin{abstract}
 
-This is the abstract
+  Radial-velocity (RV) planet searches are often polluted by signals caused by gas motion at the star's surface. Stellar activity can mimic or mask changes in the RVs caused by orbiting planets, resulting in false positives or missed detections.
+  Here we use Gaussian process (GP) regression to disentangle the contradictory report of planets vs. rotation artifacts in Kapteyn's star (Anglada-Escud\'e et al. 2014, Robertson et al. 2015, Anglada-Escud\'e et al. 2016).
+  To model rotation, we use joint quasi-periodic kernels for the RV and H-alpha signals, requiring that their periods and decorrelation timescales be the same.
+  We then construct residual RV data sets by subtracting off realizations of the GP drawn from Markov-chain Monte Carlo sampling.
+  Having removed the velocity signature of rotation, we calculate the periodogram of each realization of the residuals to determine if any significant signals remain that may suggest an exoplanet.
+  We conclude that the periodic signals of both previously reported ``planets'' are products of the star's rotation and activity.
 
 \end{abstract}
 
@@ -40,11 +45,20 @@ question?
 
 A bit of info about Kapteyn's star
 
+Kapteyn's star, or HD 33793, is a red M1 sub-dwarf located 3.91 parsecs from the Sun and is the closest halo star to our solar system.
+Two super-earth exoplanets, Kapteyn b and c, are reported (Anglada Escude\'e et al. 2014) with orbital periods of 48.6 and 121.5 days, respectively.
+The former of the two planets is believed to exist in Kapteyn's star's habitable zone.
+The existences of the two planets were contested in 2015 by Robertson et al. who claimed that Kaptyen's stellar rotation period was 143 days. The period of 48.6 days associated with Kapteyn b is an integer fraction (1/3) of this rotation and therefore is likely a product of stellar activity.
+Additionally, the period of 121.5 days is close to that of the star's rotation which necessitates further observation of the star to determine the validity of Kapteyn c.
+
 \section{Gaussian process model}
 
 High-level description of how it works
 
 Equations describing kernels
+\begin{equation}
+  k_{i,j} = Aexp[-\frac{(t_i - t_j)^2}{\lambda^2} - \frac{1}{2\omega^2}sin^2(\frac{\pi(t_i -t_j)}{P})] + \sigma_i^2\delta_{ij}
+  \end{equation}
 
 Explanation of likelihood function
 
