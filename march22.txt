@@ -1,0 +1,15 @@
+goals from March 22 meeting
+
+      - compare our GP realizations' chi^2 (per free parameter) to Angalada-Escude's model
+
+      	chi^2 = [ SUM(i=1:N){ (y(i) - m(i))^2 } / sigma(i)^2 ] / (N-#pars-1)
+	- y = data
+	- m = model
+	- sigma = uncertainty
+
+
+      - Do we need a correlated noise model?
+      - Begin work on Latex journal
+      - Compare joint quasiperiodic with joint H-alpha longterm
+      	- Likelihood ratios
+	- BICS

@@ -1,0 +1,114 @@
+\documentclass{aastex6}
+\usepackage{graphicx}
+\usepackage{mathrsfs,amssymb}
+\usepackage{amsmath}
+\shorttitle{No evidence for planets orbiting Kapteyn's star}
+\shortauthors{Us}
+
+\begin{document}
+\pagestyle{plain}
+\pagenumbering{arabic}
+
+\title{A Gaussian Process Regression Reveals No Evidence for Planets
+Orbiting Kapteyn's Star}
+
+\author{Author 1\altaffilmark{1}}
+\author{Author 2\altaffilmark{1}}
+\author{etc\altaffilmark{1}}
+
+\altaffiltext{1}{University of Delaware \\ Department of Physics
+and Astronomy \\ 217 Sharp Lab \\ Newark, DE 19716 USA}
+
+\email{someone@udel.edu}
+
+\begin{abstract}
+
+  Radial-velocity (RV) planet searches are often polluted by signals caused by gas motion at the star's surface. Stellar activity can mimic or mask changes in the RVs caused by orbiting planets, resulting in false positives or missed detections.
+  Here we use Gaussian process (GP) regression to disentangle the contradictory report of planets vs. rotation artifacts in Kapteyn's star (Anglada-Escud\'e et al. 2014, Robertson et al. 2015, Anglada-Escud\'e et al. 2016).
+  To model rotation, we use joint quasi-periodic kernels for the RV and H-alpha signals, requiring that their periods and decorrelation timescales be the same.
+  We then construct residual RV data sets by subtracting off realizations of the GP drawn from Markov-chain Monte Carlo sampling.
+  Having removed the velocity signature of rotation, we calculate the periodogram of each realization of the residuals to determine if any significant signals remain that may suggest an exoplanet.
+  We conclude that the periodic signals of both previously reported ``planets'' are products of the star's rotation and activity.
+
+\end{abstract}
+
+\keywords{planets and satellites: detection --- stars: rotation
+--- stars: activity --- stars: individual (GJ 191) --- methods:
+statistical}
+
+\maketitle
+
+\section{Introduction}
+
+Why did we do the project? What's the interesting science
+question?
+
+A bit of info about Kapteyn's star
+
+Kapteyn's star, or HD 33793, is a red M1 sub-dwarf located 3.91 parsecs from the Sun and is the closest halo star to our solar system.
+Two super-earth exoplanets, Kapteyn b and c, are reported (Anglada Escude\'e et al. 2014) with orbital periods of 48.6 and 121.5 days, respectively.
+The former of the two planets is believed to exist in Kapteyn's star's habitable zone.
+The existences of the two planets were contested in 2015 by Robertson et al. who claimed that Kaptyen's stellar rotation period was 143 days. The period of 48.6 days associated with Kapteyn b is an integer fraction (1/3) of this rotation and therefore is likely a product of stellar activity.
+Additionally, the period of 121.5 days is close to that of the star's rotation which necessitates further observation of the star to determine the validity of Kapteyn c.
+
+\section{Gaussian process model}
+
+High-level description of how it works
+
+Equations describing kernels
+\begin{equation}
+  k_{i,j} = Aexp[-\frac{(t_i - t_j)^2}{\lambda^2} - \frac{1}{2\omega^2}sin^2(\frac{\pi(t_i -t_j)}{P})] + \sigma_i^2\delta_{ij}
+  \end{equation}
+
+Explanation of likelihood function
+
+Convergence tests
+
+\section{Results: Rotation and search for residual periodicity}
+
+Selecting appropriate model complexity
+
+Posteriors
+
+Realizations of the GP
+
+Reduced $\chi^2$ comparison between 2-planet model and GP model
+
+Periodograms of residuals
+
+\section{Discussion and conclusions}
+
+What did we learn?
+
+What are the implications for future exoplanet research?
+
+Acknowledgments: This research was supported by ... We thank
+Dan Foreman-Mackey, Jessi Cisewski and others for their help ...
+
+\begin{thebibliography}{99} 
+
+% \bibitem[Aikawa et al.(1997)]{aikawa97} Aikawa, Y., Umebayashi,
+% T., Nakano, T., \& Miyama, S.~M.\ 1997, \apj, 486, L51
+
+% \bibitem[Ansdell et al.(2017)]{ansdell17} Ansdell, M., Williams,
+% J.~P., Manara, C.~F., et al.\ 2017, \aj, 153, 240
+
+\end{thebibliography}
+
+%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%%%%%
+
+\clearpage
+
+% Syntax for including a figure
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[width=0.90\textwidth]{fCinCO.pdf} 
+% \caption{Fraction of carbon atoms incorporated in CO as a
+% function of time.}
+% \label{fig:fcovstime}
+% \end{figure}
+
+% Note: you can also put the figures directly in the main text
+
+\end{document}                     
+
