@@ -12,20 +12,20 @@
 \title{A Gaussian Process Regression Reveals No Evidence for Planets
 Orbiting Kapteyn's Star}
 
-\author{Author 1\altaffilmark{1}}
-\author{Author 2\altaffilmark{1}}
-\author{etc\altaffilmark{1}}
+\author{Anna Bortle\altaffilmark{1}}
+\author{Hallie Fausey\altaffilmark{1}}
+\author{Jinbiao Ji\altaffilmark{1}}
 
 \altaffiltext{1}{University of Delaware \\ Department of Physics
 and Astronomy \\ 217 Sharp Lab \\ Newark, DE 19716 USA}
 
-\email{someone@udel.edu}
+\email{abortle@udel.edu}
 
 \begin{abstract}
 
   Radial-velocity (RV) planet searches are often polluted by signals caused by gas motion at the star's surface. Stellar activity can mimic or mask changes in the RVs caused by orbiting planets, resulting in false positives or missed detections.
   Here we use Gaussian process (GP) regression to disentangle the contradictory report of planets vs. rotation artifacts in Kapteyn's star (Anglada-Escud\'e et al. 2014, Robertson et al. 2015, Anglada-Escud\'e et al. 2016).
-  To model rotation, we use joint quasi-periodic kernels for the RV and H-alpha signals, requiring that their periods and decorrelation timescales be the same.
+  To model rotation, we use joint quasi-periodic kernels for the RV and H$\alpha$ signals, requiring that their periods and decorrelation timescales be the same.
   We then construct residual RV data sets by subtracting off realizations of the GP drawn from Markov-chain Monte Carlo sampling.
   Having removed the velocity signature of rotation, we calculate the periodogram of each realization of the residuals to determine if any significant signals remain that may suggest an exoplanet.
   We conclude that the periodic signals of both previously reported ``planets'' are products of the star's rotation and activity.
@@ -38,49 +38,96 @@ statistical}
 
 \maketitle
 
-\section{Introduction}
+\section{Introduction}\label{sec:intro}
 
-Why did we do the project? What's the interesting science
-question?
+\textbf{Why did we do the project? What's the interesting science
+question?}
 
-A bit of info about Kapteyn's star
+\textbf{A bit of info about Kapteyn's star}\\
 
-Kapteyn's star, or HD 33793, is a red M1 sub-dwarf located 3.91 parsecs from the Sun and is the closest halo star to our solar system.
-Two super-earth exoplanets, Kapteyn b and c, are reported (Anglada Escude\'e et al. 2014) with orbital periods of 48.6 and 121.5 days, respectively.
-The former of the two planets is believed to exist in Kapteyn's star's habitable zone.
-The existences of the two planets were contested in 2015 by Robertson et al. who claimed that Kaptyen's stellar rotation period was 143 days. The period of 48.6 days associated with Kapteyn b is an integer fraction (1/3) of this rotation and therefore is likely a product of stellar activity.
-Additionally, the period of 121.5 days is close to that of the star's rotation which necessitates further observation of the star to determine the validity of Kapteyn c.
+In 2014, two exoplanets were reported around Kapteyn's star (HD 33793), a red M1 sub-dwarf located 3.91 parsecs from the Sun.
+The two planets, Kapteyn b and c, have reported periods of 48.6 and 121.5 days, respectively. The existences of the planets were contested in 2015 by Robertson et al..
+Robertson claimed that Kapteyn's stellar rotation period is 143 days and that the 48.6 day period associated with Kapteyn b is an integer fraction (1/3) of this rotation and therefore is a product of stellar activity.
+Additionally, the period of 121.5 days is close to that of the star's rotation which necessitates further observation of the star to determine the validity of Kapteyn c. \par
+In both papers, a sinusoidal model was used to fit radial velocity data gathered from the HARPS and HIRES spectrographs.
 
-\section{Gaussian process model}
+\section{Gaussian process model}\label{sec:GP}
 
-High-level description of how it works
+\textbf{High-level description of how it works}
 
-Equations describing kernels
-\begin{equation}
-  k_{i,j} = Aexp[-\frac{(t_i - t_j)^2}{\lambda^2} - \frac{1}{2\omega^2}sin^2(\frac{\pi(t_i -t_j)}{P})] + \sigma_i^2\delta_{ij}
+\textbf{Equations describing kernels}
+
+\textbf{Explanation of likelihood function}
+
+\textbf{Convergence tests}
+
+\begin{figure} \label{fig:data}
+    \begin{center}
+    \includegraphics[width = 0.8\textwidth, height = 10cm]{data.png}
+    \caption{Radial velocity and H$\alpha$ data of Kapteyn's Star from HARPS and HIRES spectrographs. }
+     \end{center}
+\end{figure}
+
+The GP works by using covariance matrices to describe how closely an RV or H$\alpha$ data point is related to other data points at various times in the series. For our model, we included a periodic kernel for the stars rotation and a squared exponential kernel to account for the dynamic configuration of stellar activity. Such activity would cause a weaker correlation between data points that are farther from each other in the time series. Multiplying the two kernels together and adding a white noise term accounting for the data uncertainties results in the final quasiperiodic kernel used to model the system. This white noise term adds the uncertainties to the diagonals of the covariance matrix.
+\begin{figure} \label{fig:kernel_visual}
+    \begin{center}
+    \includegraphics[width = 0.9\textwidth]{kernels.png}
+    \caption{Images of each component of the kernel, along with the final, quasiperiodic kernel.}
+     \end{center}
+\end{figure}\\
+\textcolor{red}{NOTE: Because we've changed how we deal with white noise in the code, what is the best way to explain it in the paper? ie. Do we keep the noise term in the equation and noise kernel in the description, or do we just mention that the errors are added in quadrature using george's compute function? For now I'll do both and we can just take out whatever we need to.}
+
+
+The equation describing the quasiperiodic kernel is as follows:
+\begin{equation} \label{eq:quasi_kernel}
+  k_{i,j} = A\ \mathrm{exp}\left[-\frac{(t_i - t_j)^2}{\lambda^2} - \frac{1}{2\omega^2}\mathrm{sin}^2\left(\frac{\pi(t_i -t_j)}{P}\right)\right] + \sigma_i^2\delta_{ij},%% <-- potentially cut the noise term of the equation
   \end{equation}
+where $A$ is the amplitude, $\lambda$ is the decorrelation time-scale, $\omega$ is the smoothness of the periodic component, $P$ is the rotation period, and $\sigma$ is the white noise.\par
+ %The uncertainties of each data point were accounted for in George's compute function, which treats them as white noise, and adds them the the diagonals of the covariance matrices in quadrature.\par
+To choose the appropriate model complexity, one model had an additional exponential squared kernel and an associated amplitude parameter applied to $H\alpha$ to model long term signal drift. Another model had two additional exponential squared kernels and associated amplitude parameters, one for modeling long term signal drift in RV and the other for long term signal drift in $H\alpha$. \par
+Comparing the different models was done using Bayesian Inforamtion Criterion and likelihood ratios. $\chi^2$ was also computed for each model. The analysis was done by calculating the quantities for a number of the samples and creating a histogram. This allowed for the most common samples of each model to be accounted for when comparing the likelihoods of each mode.
 
-Explanation of likelihood function
+\section{Results: Rotation and search for residual periodicity}\label{sec:results}
 
-Convergence tests
+\textbf{Selecting appropriate model complexity}
 
-\section{Results: Rotation and search for residual periodicity}
+\textbf{Posteriors}
 
-Selecting appropriate model complexity
+\textbf{Realizations of the GP}
 
-Posteriors
+\textbf{Reduced $\chi^2$ comparison between 2-planet model and GP model}
 
-Realizations of the GP
+\textbf{Periodograms of residuals}\\
 
-Reduced $\chi^2$ comparison between 2-planet model and GP model
+\begin{figure} \label{fig:realizations}
+    \begin{center}
+    \includegraphics[scale = 0.6]{gp_realizations.png}
+    \caption{Caption}   
+    \end{center}
+\end{figure}
 
-Periodograms of residuals
+\begin{figure} \label{fig:post}
+    \begin{center}
+    \includegraphics[width = 0.9\textwidth]{posterior.png}
+    \caption{Posteriors of quasiperiodic model.}
+     \end{center}
+\end{figure}
 
-\section{Discussion and conclusions}
+\begin{figure} \label{fig:periodogram}
+    \begin{center}
+    \includegraphics[scale = 0.7]{rv_periodogram.png}
+    \caption{Caption}
+    \end{center}
+\end{figure}
 
-What did we learn?
 
-What are the implications for future exoplanet research?
+
+
+\section{Discussion and conclusions}\label{sec:disc}
+
+\textbf{What did we learn?}
+
+\textbf{What are the implications for future exoplanet research?}\\
 
 Acknowledgments: This research was supported by ... We thank
 Dan Foreman-Mackey, Jessi Cisewski and others for their help ...
@@ -110,5 +157,4 @@ Dan Foreman-Mackey, Jessi Cisewski and others for their help ...
 
 % Note: you can also put the figures directly in the main text
 
-\end{document}                     
-
+\end{document}
