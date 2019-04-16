@@ -1,0 +1,7 @@
+goals from March 29 meeting
+
+      - likelihood ratio & BIC tests on quasiperiodic joint and joint w/ H-alpha longterm (with tighter bounds)
+      - LaTeX journal
+      - chi^2 on our models and on Anglada-Escude's
+      - send email updates for next Friday (Spring Break)
+      - first meeting back will likely be on a day other than Friday
