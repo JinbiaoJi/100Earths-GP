@@ -1,0 +1,12 @@
+Goals from April 19th meeting:
+
+- Use Systemic for find chi^2 for Anglada-Escude et al.'s model
+  - create .sys and .vels files
+  - add planet parameters
+  - will calculate chi^2 for you
+  
+- Experiment with Period and Gamma RV priors
+
+- ipython fitting of Anglada-Escude et al.'s model
+  - double check for correct units
+  - mess around with it, something isn't quite right
