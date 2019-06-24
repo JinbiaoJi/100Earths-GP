@@ -49,7 +49,7 @@ In 2014, two exoplanets were reported around Kapteyn's star (HD 33793), a red M1
 The two planets, Kapteyn b and c, have reported periods of 48.6 and 121.5 days, respectively. The existences of the planets were contested in 2015 by Robertson et al..
 Robertson claimed that Kapteyn's stellar rotation period is 143 days and that the 48.6 day period associated with Kapteyn b is an integer fraction (1/3) of this rotation and therefore is a product of stellar activity.
 Additionally, the period of 121.5 days is close to that of the star's rotation which necessitates further observation of the star to determine the validity of Kapteyn c. \par
-In both papers, a sinusoidal model was used to fit radial velocity data gathered from the HARPS and HIRES spectrographs.
+With debate on the rotation period of Kapteyn's star and to what extent its rotation and stellar activity affect the radial velocity signals, we look to use Gaussian Processes to jointly model the star's rotation and activity. After subtracting the model from the observed data, the residuals will contain exclusively any signals from possible exoplanets.
 
 \section{Gaussian process model}\label{sec:GP}
 
@@ -63,20 +63,18 @@ In both papers, a sinusoidal model was used to fit radial velocity data gathered
 
 \begin{figure} \label{fig:data}
     \begin{center}
-    \includegraphics[width = 0.8\textwidth, height = 10cm]{data.png}
-    \caption{Radial velocity and H$\alpha$ data of Kapteyn's Star from HARPS and HIRES spectrographs. }
+    \includegraphics[width = 0.8\textwidth, height = 10cm]{figures/data.pdf}
+    \caption{Radial velocity and H$\alpha$ measurements of Kapteyn's Star from HARPS and HIRES spectrographs. }
      \end{center}
 \end{figure}
 
-The GP works by using covariance matrices to describe how closely an RV or H$\alpha$ data point is related to other data points at various times in the series. For our model, we included a periodic kernel for the stars rotation and a squared exponential kernel to account for the dynamic configuration of stellar activity. Such activity would cause a weaker correlation between data points that are farther from each other in the time series. Multiplying the two kernels together and adding a white noise term accounting for the data uncertainties results in the final quasiperiodic kernel used to model the system. This white noise term adds the uncertainties to the diagonals of the covariance matrix.
+The GP works by using covariance matrices to describe how closely an RV or H$\alpha$ data point is related to other data points at various times in the series. For our model, we included a periodic kernel for the stars rotation and a squared exponential kernel to account for the dynamic configuration of stellar activity. Such activity would cause a weaker correlation between data points that are farther from each other in the time series. Multiplying the two kernels together and adding a white noise term, accounting for the observed data uncertainties, results in the final quasiperiodic kernel used to model the system. The white noise term adds the uncertainties to the diagonals of the covariance matrix.
 \begin{figure} \label{fig:kernel_visual}
     \begin{center}
-    \includegraphics[width = 0.9\textwidth]{kernels.png}
-    \caption{Images of each component of the kernel, along with the final, quasiperiodic kernel.}
+    \includegraphics[width = 0.9\textwidth]{figures/kernels.pdf}
+    \caption{Images of each component of the quasiperiodic kernel.}
      \end{center}
 \end{figure}\\
-\textcolor{red}{NOTE: Because we've changed how we deal with white noise in the code, what is the best way to explain it in the paper? ie. Do we keep the noise term in the equation and noise kernel in the description, or do we just mention that the errors are added in quadrature using george's compute function? For now I'll do both and we can just take out whatever we need to.}
-
 
 The equation describing the quasiperiodic kernel is as follows:
 \begin{equation} \label{eq:quasi_kernel}
@@ -84,8 +82,14 @@ The equation describing the quasiperiodic kernel is as follows:
   \end{equation}
 where $A$ is the amplitude, $\lambda$ is the decorrelation time-scale, $\omega$ is the smoothness of the periodic component, $P$ is the rotation period, and $\sigma$ is the white noise.\par
  %The uncertainties of each data point were accounted for in George's compute function, which treats them as white noise, and adds them the the diagonals of the covariance matrices in quadrature.\par
-To choose the appropriate model complexity, one model had an additional exponential squared kernel and an associated amplitude parameter applied to $H\alpha$ to model long term signal drift. Another model had two additional exponential squared kernels and associated amplitude parameters, one for modeling long term signal drift in RV and the other for long term signal drift in $H\alpha$. \par
-Comparing the different models was done using Bayesian Inforamtion Criterion and likelihood ratios. $\chi^2$ was also computed for each model. The analysis was done by calculating the quantities for a number of the samples and creating a histogram. This allowed for the most common samples of each model to be accounted for when comparing the likelihoods of each mode.
+ When creating the possible models, we considered the possibility that a long-term activity trend existed in the time interval covered by the given data set.
+ Thus we had two models: one with just the quasiperiodic kernel given by Eq. \ref{eq:quasi_kernel}, and one with an additional exponential squared kernel and an associated amplitude parameter applied to $H\alpha$ to model long term signal drift given by
+ \begin{equation} \label{eq:ha_lt_kernel}
+ k_{i,j} = A\ \mathrm{exp}\left[-\frac{(t_i - t_j)^2}{\lambda^2} - \frac{1}{2\omega^2}\mathrm{sin}^2\left(\frac{\pi(t_i -t_j)}{P}\right)\right] + B\ \mathrm{exp}\left[-\frac{(t_i - t_j)^2}{\gamma^2}\right] + \sigma_i^2\delta_{ij},
+ \end{equation}
+ 
+ where B is the amplitude and $\gamma$ is the decorrelation time-scale for the long-term activity trend in H$\alpha$.
+
 
 \section{Results: Rotation and search for residual periodicity}\label{sec:results}
 
@@ -99,24 +103,38 @@ Comparing the different models was done using Bayesian Inforamtion Criterion and
 
 \textbf{Periodograms of residuals}\\
 
-\begin{figure} \label{fig:realizations}
+Comparing the two models was done using Bayesian Information Criterion and likelihood ratios. $\chi^2$ was also computed for each model. The analysis was done by calculating the quantities for a number of the samples and creating a histogram. This allowed for the most common samples of each model to be accounted for when comparing the likelihoods of each mode. The BIC and likelihood ratios tended to favor the model that included a long term drift in the H$\alpha$ signal, this model also proved to be a lot more fragile. The model that only used a quasiperiodic model for both the RV and H$\alpha$ was consistent and gave reasonable results. Both models gave a 110-120 day period for the stellar rotation period of Kapteyn's  star.
+
+The emcee package was used to sample the GP 8000 times, with an additional 500 steps of burn in time. 50 pairs of realizations of the RV and H$\alpha$ curves were then chosen at random from the 8000 samples, and plotted. A separate graph was also created with 3 random realization plotted in different colors to get an idea of what individual realizations look like. 
+
+The posterior distributions of the parameters of each model were also examined to see how well the GP did at finding converged values for the parameters. For the quasiperiodic model, the distributions of the posteriors were reasonable with clear peak values and a decreasing concentration around them. \xleftarrow{}  ??Is this the best way to say this?? 
+
+After that, a periodogram of the residuals was calculated to see if there were any significant periods present, which could indicate the presence of a planet. A period of approximately 17 days was commonly (but not exclusively) the strongest existing period in each set of residuals. However, there were no peaks with a low enough false alarm probability to indicate a planet, with no peaks reaching a false alarm probability of 10\% or lower. Additionally, the 48, 121, and 143 days periods did not show any significant peaks in the residuals of the GP.
+
+\begin{figure} \label{fig:qsireal}
     \begin{center}
-    \includegraphics[scale = 0.6]{gp_realizations.png}
-    \caption{Caption}   
+    \includegraphics[scale = 0.5]{figures/3_realization_plot.png}
+    \caption{Three realizations of the Gaussian Process from the quasiperiodic model plotted with observed data. The realizations of the same color in the RV and H$\alpha$ plots correspond to the same sample.}   
+    \end{center}
+\end{figure}
+\begin{figure} \label{fig:qsireal}
+    \begin{center}
+    \includegraphics[scale = 0.5]{figures/50_realization_plot.png}
+    \caption{Fifty realizations of the Gaussian Process from the quasiperiodic plotted with observed data.}   
     \end{center}
 \end{figure}
 
-\begin{figure} \label{fig:post}
+\begin{figure} \label{fig:qsipost}
     \begin{center}
-    \includegraphics[width = 0.9\textwidth]{posterior.png}
+    \includegraphics[width = 0.9\textwidth]{figures/posteriors_qsi.pdf}
     \caption{Posteriors of quasiperiodic model.}
      \end{center}
 \end{figure}
 
-\begin{figure} \label{fig:periodogram}
+\begin{figure} \label{fig:qsipdgm}
     \begin{center}
-    \includegraphics[scale = 0.7]{rv_periodogram.png}
-    \caption{Caption}
+    \includegraphics[scale = 0.7]{figures/residuals.png}
+    \caption{Radial velocity periodogram constructed from residuals of the quasiperiodic model. Dotted lines represent false alarm probability threshold lines of 0.10, 0.05, and 0.01. The yellow, green, and blue highlighted regions contain the 48, 121, and 143 day periods respectively. This graph contains a strongest period of 22.603 days with a false alarm probability of 0.267.}
     \end{center}
 \end{figure}
 
